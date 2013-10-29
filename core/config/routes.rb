@@ -50,6 +50,8 @@ Gaku::Core::Engine.routes.draw do
   resources :class_groups do
     member do
       get :student_chooser
+      patch :soft_delete
+      patch :recover
     end
     resources :semester_class_groups, controller: 'class_groups/semester_class_groups'
     resources :class_group_course_enrollments, controller: 'class_groups/courses'
@@ -127,8 +129,8 @@ Gaku::Core::Engine.routes.draw do
   resources :teachers, concerns: %i( addressable contactable ) do
     get 'page/:page', action: :index, on: :collection
     member do
-      get :soft_delete
-      get :recovery
+      patch :soft_delete
+      patch :recovery
       get :show_deleted
     end
 
@@ -191,8 +193,8 @@ Gaku::Core::Engine.routes.draw do
   resources :course_groups do
     resources :course_group_enrollments, controller: 'course_groups/course_group_enrollments'
     member do
-      delete :soft_delete
-      get :recovery
+      patch :soft_delete
+      patch :recovery
     end
   end
 
@@ -254,19 +256,7 @@ Gaku::Core::Engine.routes.draw do
       resources :student_addresses, controller: 'student_address_changes'
     end
 
-    resources :presets do
-      collection do
-        get :students
-        get :locale
-        get :grading
-        get :pagination
-        get :defaults
-        get :output_formats
-        get :names
-
-        put :update_presets
-      end
-    end
+    resources :presets
 
     resources :disposals do
       collection do

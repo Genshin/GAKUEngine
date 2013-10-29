@@ -1,5 +1,8 @@
 = content_for :title, t(:'student.list')
 
+= content_for :new_form do
+  #new-student.hide
+
 = content_for :index_header do
   .pull-left
     = count_div 'students-count' do
@@ -8,9 +11,4 @@
     = ajax_link_to_new t(:'student.new'), new_student_path, id: "new-student-link"
     = render 'gaku/shared/overrides/students/import_link'
 
-= content_for :new_form do
-  #new-student.hide
-
 = render 'gaku/shared/student_chooser/chooser'
-
-= hr

@@ -46,10 +46,6 @@ describe 'Exams' do
       flash_created?
     end
 
-    it 'cancels creating', cancel: true do
-      ensure_cancel_creating_is_working
-    end
-
     it 'errors without required exam fields' do
       has_validations?
     end
@@ -117,7 +113,6 @@ describe 'Exams' do
       context '#edit', js: true do
         before do
           click_on 'Edit'
-          page.should have_content 'Edit Exam'
         end
 
         it 'edits from show view' do
