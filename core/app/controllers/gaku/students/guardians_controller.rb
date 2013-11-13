@@ -2,7 +2,7 @@ module Gaku
   class Students::GuardiansController < GakuController
 
     respond_to :js,   only: %i( new create destroy recovery )
-    respond_to :html, only: %i( edit show soft_delete )
+    respond_to :html, only: %i( edit update soft_delete )
 
     before_action :set_student
     before_action :set_unscoped_guardian,  only: %i( destroy recovery )
@@ -23,19 +23,9 @@ module Gaku
     def edit
     end
 
-    def show
-    end
-
     def update
       @guardian.update(guardian_params)
-      respond_with(@guardian) do |format|
-        if params[:guardian][:picture]
-          format.html { redirect_to [:edit, @student, @guardian], notice: t(:'notice.uploaded', resource: t(:'picture')) }
-        else
-          format.html { redirect_to [:edit, @student, @guardian] }
-          format.js { render }
-         end
-      end
+      respond_with @guardian, location: [:edit, @student, @guardian]
     end
 
     def destroy
@@ -46,14 +36,13 @@ module Gaku
 
     def recovery
       @guardian.recover
-      flash.now[:notice] = t(:'notice.recovered', resource: t_resource)
       respond_with @guardian
     end
 
     def soft_delete
       @guardian.soft_delete
-      redirect_to student_guardians_path(@student),
-                  notice: t(:'notice.destroyed', resource: t_resource)
+      set_count
+      respond_with @guardian, location: edit_student_path(@student)
     end
 
     private
@@ -76,10 +65,6 @@ module Gaku
 
     def set_unscoped_guardian
       @guardian = Guardian.unscoped.find(params[:id]).decorate
-    end
-
-    def t_resource
-      t(:'guardian.singular')
     end
 
     def set_count

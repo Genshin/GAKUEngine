@@ -26,15 +26,15 @@ module Gaku
     end
 
     def can_edit?
-      if controller.action_name == 'show'
-        if controller.controller_name == 'students' || controller.controller_name == 'guardians' || controller.controller_name == 'teachers'
-          false
-        else
-          true
-        end
-      else
+      if controller.action_name.include?('edit')
         true
+      else
+        false
       end
+    end
+
+    def cannot_edit?
+      ! can_edit?
     end
 
     def genders

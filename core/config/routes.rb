@@ -45,7 +45,7 @@ Gaku::Core::Engine.routes.draw do
     post :create_admin,        to: 'devise/registrations#create_admin'
   end
 
-  resources :extracurricular_activities, concerns: %i( student_chooser ) do
+  resources :extracurricular_activities, concerns: %i( student_chooser pagination soft_delete show_deleted ) do
     resources :students,
       controller: 'extracurricular_activities/students',
       concerns: %i( enroll_student )
@@ -57,7 +57,7 @@ Gaku::Core::Engine.routes.draw do
     resources :students, controller: 'class_groups/students', concerns: %i( enroll_student )
   end
 
-  resources :courses, concerns: %i( notes student_chooser ) do
+  resources :courses, concerns: %i( notes student_chooser soft_delete show_deleted ) do
     resources :semester_courses, controller: 'courses/semester_courses'
     resources :enrollments, controller: 'courses/enrollments', concerns: %i( enroll_student ) do
       post :enroll_class_group, on: :collection
@@ -85,7 +85,7 @@ Gaku::Core::Engine.routes.draw do
   resources :course_enrollments,                   concerns: %i( enroll_students )
   resources :extracurricular_activity_enrollments, concerns: %i( enroll_students )
 
-  resources :syllabuses, concerns: %i( notes ) do
+  resources :syllabuses, concerns: %i( notes soft_delete show_deleted ) do
     resources :assignments,     controller: 'syllabuses/assignments'
     resources :exams,           controller: 'syllabuses/exams'
     resources :exam_syllabuses, controller: 'syllabuses/exam_syllabuses'
@@ -96,14 +96,14 @@ Gaku::Core::Engine.routes.draw do
   resources :students, concerns: %i( addresses contacts notes soft_delete show_deleted pagination ) do
     get :load_autocomplete_data, on: :collection
 
-    resources :simple_grades,        controller: 'students/simple_grades'
+    resources :simple_grades,        controller: 'students/simple_grades', except: :show
     resources :commute_methods,      controller: 'students/commute_methods'
     resources :student_achievements, controller: 'students/student_achievements', except: :show
     resources :student_specialties,  controller: 'students/student_specialties',  except: :show
 
-    resources :guardians,
+    resources :guardians, except: %i( index show ),
       controller: 'students/guardians',
-      concerns: %i( addresses contacts soft_delete ), except: :index
+      concerns: %i( addresses contacts soft_delete )
 
     resources :course_enrollments,
       controller: 'students/course_enrollments',
@@ -135,8 +135,9 @@ Gaku::Core::Engine.routes.draw do
 
   namespace :admin do
 
-    match 'school_details' => 'schools#school_details', via: :get
-    match 'school_details/edit' => 'schools#edit_master', via: :get
+    get 'school_details',          to: 'schools#show_master'
+    get 'school_details/edit',     to: 'schools#edit_master'
+    patch 'school_details/update', to: 'schools#update_master'
 
     resources :schools do
       resources :programs, controller: 'schools/programs' do
@@ -146,8 +147,8 @@ Gaku::Core::Engine.routes.draw do
           get :show_program_specialties
         end
       end
-      resources :campuses, controller: 'schools/campuses', concerns: %i( contacts ) do
-        resources :addresses, controller: 'schools/campuses/addresses'
+      resources :campuses, controller: 'schools/campuses', except: :index,  concerns: %i( contacts ) do
+        resources :addresses, controller: 'schools/campuses/addresses', except: %i( show index )
       end
     end
 

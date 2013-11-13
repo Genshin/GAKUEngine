@@ -4,6 +4,8 @@
  * require font-awesome
  *= require jquery.ui.autocomplete
  *= require jquery.minicolors
+ *= require nprogress
+ *= require nprogress-bootstrap
  *= require phantom_helpers
  *= require phantom_forms
  *= require gaku/exams
