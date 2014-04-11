@@ -6,7 +6,7 @@ Gaku::Core::Engine.routes.draw do
   end
 
   concern :addresses do
-    resources :addresses, concerns: %i( soft_delete primary ), except: %i( show index )
+    resources :addresses, concerns: %i( soft_delete primary ), except: %i( show )
   end
 
   concern :contacts do
@@ -18,7 +18,7 @@ Gaku::Core::Engine.routes.draw do
   end
 
   concern :gradable do
-    resources :grading_method_connectors, only: %i( new create destroy ), concerns: %i( sort ) do
+    resources :grading_method_connectors, only: %i( new create destroy index ), concerns: %i( sort ) do
       collection do
         get :new_set
         post :add_set
@@ -34,8 +34,13 @@ Gaku::Core::Engine.routes.draw do
   concern(:enroll_students) { post :enroll_students, on: :collection }
   concern(:enroll_student)  { post :enroll_student, on: :collection }
   concern(:student_chooser) { get :student_chooser, on: :member }
-  concern(:set_picture)     { patch :set_picture, on: :member }
-
+  concern(:student_selection) { get :student_selection, on: :member }
+  concern(:set_picture) do
+    member do
+      patch :set_picture
+      delete :remove_picture
+    end
+  end
 
   devise_scope :user do
     get :set_up_admin_account, to: 'devise/registrations#set_up_admin_account'
@@ -48,7 +53,7 @@ Gaku::Core::Engine.routes.draw do
       concerns: %i( enroll_student )
   end
 
-  resources :class_groups, concerns: %i( notes student_chooser pagination ) do
+  resources :class_groups, concerns: %i( notes student_chooser student_selection pagination ) do
     collection do
       get :search
       get :search_semester
@@ -96,7 +101,17 @@ Gaku::Core::Engine.routes.draw do
     resources :exam_syllabuses, controller: 'syllabuses/exam_syllabuses'
   end
 
-  resources :teachers, concerns: %i( addresses contacts notes show_deleted pagination )
+  resources :teachers, concerns: %i( addresses contacts notes show_deleted pagination set_picture )
+
+  resources :student_selection, only: :index do
+    collection do
+      get :clear
+      post :add
+      post :remove
+    end
+  end
+
+  resources :guardians, only: [], concerns: %i( addresses contacts set_picture )
 
   resources :students, concerns: %i( addresses contacts notes pagination set_picture ) do
     get :search, on: :collection
@@ -109,16 +124,16 @@ Gaku::Core::Engine.routes.draw do
     resources :student_specialties,  controller: 'students/student_specialties',  except: :show
     resources :external_school_records,  controller: 'students/external_school_records',  except: :show
 
-    resources :guardians, except: %i( index show ),
-      controller: 'students/guardians',
-      concerns: %i( addresses contacts )
+    resources :guardians, except: %i( show )
 
     resources :course_enrollments,
       controller: 'students/course_enrollments',
-      only: %i( new create destroy )
+      only: %i( new create destroy index )
 
     resources :class_group_enrollments, controller: 'students/class_group_enrollments'
   end
+
+
 
   resources :exam_sessions, controller: 'exams/exam_sessions', except: :index
 

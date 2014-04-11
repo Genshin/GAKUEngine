@@ -15,6 +15,10 @@
 #= require bootstrap/tab
 #= require bootstrap/dropdown
 #= require bootstrap/modal
+#= require bootstrap/collapse
+#= require bootstrap/transition
+#= require bootstrap/tooltip
+#= require bootstrap/popover
 
 #= require nprogress
 #= require nprogress-turbolinks

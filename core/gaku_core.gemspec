@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails-i18n',                     '~> 4.0.2'
 
   s.add_dependency 'pg',                             '0.17.1'
+  s.add_dependency 'redis',                          '3.0.7'
 
   s.add_dependency 'globalize',                      '~> 4.0.0'
   s.add_dependency 'paperclip',                      '~> 3.5'
@@ -36,7 +37,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'devise-i18n'
   s.add_dependency 'cancan',                         '~> 1.6.10'
 
-  s.add_dependency 'localeapp'
+  #s.add_dependency 'localeapp'
   s.add_dependency 'highline',                       '1.6.11'
   s.add_dependency 'ffaker',                         '~> 1.23.0'
   s.add_dependency 'rake-progressbar'
