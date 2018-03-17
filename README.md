@@ -45,6 +45,8 @@ Docker instance:
 
 New Installation
 ----------------
+*work in progress*
+
 ### Install the 'gaku' gem and command
 ```shell
 gem install gaku
@@ -56,6 +58,11 @@ gaku install MySchoolName
 ```
 *Replace MySchoolName with your school name or the name you want for your GAKU installation.*  
 *Please avoid using spaces and special characters in your installation name.*
+
+Manual Installation
+-------------------
+0. Create a Rails app using PostgreSQL as your database and configure your config/database.yml
+1. Add the following to your Gemfile: ```gem 'gaku'``` and run ```bundle install```
 
 Developer Information
 =====================
