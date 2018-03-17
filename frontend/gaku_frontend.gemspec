@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'coffee-rails',                   '~> 4.2.1'
   s.add_dependency 'sass-rails',                     '~> 5.0.6'
   s.add_dependency 'sprockets',                      '3.7.1'
-  s.add_dependency 'sass',                           '~> 3.4.23'
+  s.add_dependency 'sass',                           '~> 3.5.3'
   s.add_dependency 'slim',                           '~> 3.0.7'
   s.add_dependency 'responders',                     '~> 2.3.0'
   s.add_dependency 'nested_form'

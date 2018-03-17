@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'ransack',           '~> 1.8.2'
   s.add_dependency 'kaminari',          '~> 1.0.1'
   s.add_dependency 'draper',            '~> 3.0.1'
-  s.add_dependency 'devise',            '~> 4.3.0'
+  s.add_dependency 'devise',            '~> 4.4.2'
   s.add_dependency 'devise-i18n'
   s.add_dependency 'cancan',            '~> 1.6.10'
   s.add_dependency 'highline'

@@ -7,6 +7,9 @@ module Gaku
     include Gaku::SharedHelper
     include Gaku::StudentChooserHelper
     include Gaku::StudentsHelper
+    include SortHelper
+    include TranslationsHelper
+    include FlashHelper
 
     def gradable_resource(gradable)
       gradable.class.to_s.demodulize.underscore.dasherize

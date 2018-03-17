@@ -3,9 +3,9 @@ module Gaku
 
     respond_to :js, except: :index
 
-    before_filter :set_exam_session, only: %i( edit update destroy grading )
-    before_filter :load_data, only: %i( new edit )
-    before_filter :set_count, only: :create
+    before_action :set_exam_session, only: %i( edit update destroy grading )
+    before_action :load_data, only: %i( new edit )
+    before_action :set_count, only: :create
 
     def new
       @exam_session = ExamSession.new
