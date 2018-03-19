@@ -43,7 +43,7 @@ module Gaku
     end
 
     def self._exe(command)
-      `#{_goto_root_dir} && #{command}`
+      system("#{_goto_root_dir} && #{command}")
     end
 
     def self.wait_for_container
