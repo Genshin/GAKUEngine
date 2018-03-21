@@ -50,4 +50,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'gaku_testing', s.version
   s.add_dependency 'gaku_sample', s.version
+
+  s.add_dependency 'faraday'
 end
