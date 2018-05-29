@@ -1,9 +1,9 @@
 module Gaku
   module GakuHelper
 
-    include SortHelper
-    include TranslationsHelper
-    include FlashHelper
+    # include SortHelper
+    # include TranslationsHelper
+    # include FlashHelper
 
     def broadcast(channel, &block)
       message = {:channel => channel, :data => capture(&block)}
@@ -152,4 +152,3 @@ module Gaku
 
   end
 end
-

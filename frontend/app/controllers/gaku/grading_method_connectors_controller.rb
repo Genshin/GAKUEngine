@@ -1,5 +1,5 @@
 module Gaku
-  class GradingMethodConnectorsController < Gaku::GakuController
+  class GradingMethodConnectorsController < GakuController
 
     respond_to :js
 

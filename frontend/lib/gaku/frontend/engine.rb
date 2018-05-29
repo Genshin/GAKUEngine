@@ -6,7 +6,7 @@ module Gaku
       config.autoload_paths += %W(#{config.root}/lib)
 
       config.to_prepare do
-        Gaku::GakuController.helper(Gaku::FrontendHelper)
+        # Gaku::GakuController.helper(Gaku::FrontendHelper)
       end
 
       config.after_initialize do
