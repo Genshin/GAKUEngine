@@ -2,11 +2,12 @@ module Gaku
   module Api
     module V1
       class CoursesController < BaseController
+        load_and_authorize_resource class: 'Gaku::Course'
 
         before_action :set_course, only: %i( show update destroy )
 
         def index
-          @courses = Course.all.page(params[:page ])
+          @courses = Course.all.page(params[:page])
           collection_respond_to @courses, root: :courses
         end
 
