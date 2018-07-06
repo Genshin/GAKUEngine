@@ -43,6 +43,12 @@ Gaku::Core::Engine.routes.draw do
         resources :exams, controller: 'syllabuses/exams'
       end
       resources :contact_types
+      resources :users do
+        resources :user_roles, controller: 'users/user_roles'
+      end
+
+      resources :roles, only: :index
+      resources :enrollment_statuses, only: :index
     end
   end
 end
