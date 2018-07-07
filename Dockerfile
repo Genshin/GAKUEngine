@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER Georgi Tapalilov & Rei Kagetsuki
 
 EXPOSE 3000
@@ -7,7 +7,7 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends apt-utils
 
 RUN apt-get install -y cmake libpng-dev libboost-program-options-dev libboost-regex-dev \
-	libboost-system-dev libboost-filesystem-dev build-essential ruby2.3-dev autoconf \
+	libboost-system-dev libboost-filesystem-dev build-essential ruby2.5-dev autoconf \
 	libgmp-dev imagemagick libmagickcore-dev libmagickwand-dev git libpq-dev postgresql-client
 
 # ENV BUNDLE_PATH=/gems \
