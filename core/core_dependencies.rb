@@ -11,5 +11,4 @@ group :test do
   gem 'shoulda-matchers',         '~> 3.1.2'
   gem 'rails-controller-testing'
   gem 'simplecov'
-  gem 'coveralls', require: false
 end
