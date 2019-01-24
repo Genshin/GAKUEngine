@@ -16,7 +16,6 @@ require 'gaku/testing/factories'
 
 Dir["#{File.dirname(__FILE__)}/support/models/**/*.rb"].each { |f| require f }
 
-# ActiveRecord::Migration[4.2].check_pending! if defined?(ActiveRecord::Migration[4.2])
 require 'shoulda/matchers'
 
 Shoulda::Matchers.configure do |config|
