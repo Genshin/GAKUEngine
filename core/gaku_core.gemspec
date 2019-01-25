@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'pg',                '~> 1.1.4'
   s.add_dependency 'redis',             '~> 4.1.0'
   s.add_dependency 'carmen',            '~> 1.1.1'
+  s.add_dependency 'listen'
   s.add_dependency 'activemodel-serializers-xml'
   s.add_dependency 'paperclip',         '~> 6.1.0'
   s.add_dependency 'ransack',           '~> 2.1.1'

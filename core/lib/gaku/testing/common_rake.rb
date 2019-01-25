@@ -25,7 +25,7 @@ namespace :common do
     # **if (!!(`PGPASSWORD=manabu psql postgres --user manabu -c "SELECT datname FROM pg_database WHERE has_database_privilege('manabu', datname, 'CONNECT');"` =~ /gaku_test/))
     # ** `bundle exec rails app:update:bin db:environment:set db:drop db:create db:migrate db:test:prepare RAILS_ENV=test`
     if (!!(`PGPASSWORD=manabu psql postgres --user manabu -c "SELECT current_setting('is_superuser');"` =~ /on/))
-      `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:drop db:create db:migrate db:test:prepare`
+      _run_db_prep_tasks()
     else
       printf "Database was not accessible. How would you like to proceed?\n" \
         "(1) Try to create user and database automatically (requires sudo)\n" \
@@ -43,12 +43,37 @@ namespace :common do
           _autopilot_setup
         when '2' then
           puts 'Running creation tasks/migrations...'
-          `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:drop db:create db:migrate db:test:prepare`
+          _run_db_prep_tasks
+          # `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:drop db:create db:migrate db:test:prepare`
         else
           puts
       end
     end
   end
+end
+
+def _run_db_prep_tasks
+  term_cover = " 1> /dev/null 2> /dev/null"
+  `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:drop`
+  
+  `PGPASSWORD=manabu psql -U manabu -d gaku_test -c "DROP DATABASE IF EXISTS gaku_test;"#{term_cover}`
+  `PGPASSWORD=manabu psql -U manabu -d gaku_development -c "DROP DATABASE IF EXISTS gaku_development;"#{term_cover}`
+  
+  # Create the gaku_test database and grant privileges to user
+  `PGPASSWORD=manabu psql -U manabu -d template1 -c "CREATE DATABASE gaku_test;"#{term_cover}`
+  `PGPASSWORD=manabu psql -U manabu -d gaku_test -c "GRANT ALL PRIVILEGES ON DATABASE \"gaku_test\" to manabu;"#{term_cover}`
+  `PGPASSWORD=manabu psql -U manabu gaku_test -c "CREATE EXTENSION hstore;"#{term_cover}`
+  `PGPASSWORD=manabu psql -U manabu -d gaku_test -c "ALTER DATABASE gaku_test OWNER TO manabu;"#{term_cover}`
+
+  # Create the gaku_development database and grant privileges to user
+  `PGPASSWORD=manabu psql -U manabu -d template1 -c "CREATE DATABASE gaku_development;"#{term_cover}`
+  `PGPASSWORD=manabu psql -U manabu -d gaku_development -c "GRANT ALL PRIVILEGES ON DATABASE \"gaku_development\" to manabu;"#{term_cover}`
+  `PGPASSWORD=manabu psql -U manabu gaku_development -c "CREATE EXTENSION hstore;"#{term_cover}`
+  `PGPASSWORD=manabu psql -U manabu -d gaku_development -c "ALTER DATABASE gaku_development OWNER TO manabu;"#{term_cover}`
+
+  `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:create`
+  `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:migrate`
+  `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:test:prepare`
 end
 
 def _autopilot_setup
@@ -61,8 +86,8 @@ def _autopilot_setup
 
   # Create user
   `sudo -u postgres psql -c "CREATE USER manabu WITH PASSWORD 'manabu';"#{term_cover}`
+  `sudo -u postgres psql -c "ALTER USER manabu CREATEDB;"#{term_cover}`
   `sudo -u postgres psql -c "ALTER USER manabu WITH SUPERUSER;"#{term_cover}`
-  # **`sudo -u postgres psql -c "ALTER USER manabu CREATEDB;"#{term_cover}`
   `sudo -u postgres psql -c "CREATE EXTENSION IF NOT EXISTS hstore;"#{term_cover}`
 
   # **# Create the gaku_test database and grant privileges to user
@@ -79,7 +104,7 @@ def _autopilot_setup
   puts "Done."
 
   puts "Running tasks..."
-  `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:drop db:create db:migrate db:test:prepare`
+  _run_db_prep_tasks()
   puts "Done. If the test app does not run normally please follow the setup guide at: "
   puts "https://github.com/GAKUEngine/gaku"
 end
