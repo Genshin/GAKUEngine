@@ -2,8 +2,8 @@ unless defined?(Gaku::InstallGenerator)
   require 'generators/gaku/install/install_generator'
 end
 
-desc 'Generates a dummy app for testing'
 namespace :common do
+  desc 'Generates a dummy app for testing'
   task :test_app do
 
     require "#{ENV['LIB_NAME']}"
@@ -50,29 +50,45 @@ namespace :common do
       end
     end
   end
+
+  desc 'Removes dummy app and related databases and database users'
+  task :remove_test_app do
+    term_cover = " 1> /dev/null 2> /dev/null"
+    `sudo -u postgres psql -c "DROP DATABASE IF EXISTS gaku_test;"#{term_cover}`
+    `sudo -u postgres psql -c "DROP DATABASE IF EXISTS gaku_development;"#{term_cover}`
+    `sudo -u postgres psql -c "DROP USER IF EXISTS manabu;"#{term_cover}`
+
+    # TODO remove dummy directory
+  end
 end
 
 def _run_db_prep_tasks
   term_cover = " 1> /dev/null 2> /dev/null"
-  `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:drop`
+  #puts 'Doing Rails drop of testing DB'
+  #`RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:drop`
   
-  `PGPASSWORD=manabu psql -U manabu -d gaku_test -c "DROP DATABASE IF EXISTS gaku_test;"#{term_cover}`
-  `PGPASSWORD=manabu psql -U manabu -d gaku_development -c "DROP DATABASE IF EXISTS gaku_development;"#{term_cover}`
+  puts 'Manually dropping gaku_test and gaku_development databases'
+  `PGPASSWORD=manabu psql -U manabu -d template1 -c "DROP DATABASE IF EXISTS gaku_test;"#{term_cover}`
+  `PGPASSWORD=manabu psql -U manabu -d template1 -c "DROP DATABASE IF EXISTS gaku_development;"#{term_cover}`
   
-  # Create the gaku_test database and grant privileges to user
+  puts 'Create the gaku_test database and grant privileges to user'
   `PGPASSWORD=manabu psql -U manabu -d template1 -c "CREATE DATABASE gaku_test;"#{term_cover}`
   `PGPASSWORD=manabu psql -U manabu -d gaku_test -c "GRANT ALL PRIVILEGES ON DATABASE \"gaku_test\" to manabu;"#{term_cover}`
   `PGPASSWORD=manabu psql -U manabu gaku_test -c "CREATE EXTENSION hstore;"#{term_cover}`
   `PGPASSWORD=manabu psql -U manabu -d gaku_test -c "ALTER DATABASE gaku_test OWNER TO manabu;"#{term_cover}`
 
-  # Create the gaku_development database and grant privileges to user
+  puts 'Create the gaku_development database and grant privileges to user'
   `PGPASSWORD=manabu psql -U manabu -d template1 -c "CREATE DATABASE gaku_development;"#{term_cover}`
   `PGPASSWORD=manabu psql -U manabu -d gaku_development -c "GRANT ALL PRIVILEGES ON DATABASE \"gaku_development\" to manabu;"#{term_cover}`
   `PGPASSWORD=manabu psql -U manabu gaku_development -c "CREATE EXTENSION hstore;"#{term_cover}`
   `PGPASSWORD=manabu psql -U manabu -d gaku_development -c "ALTER DATABASE gaku_development OWNER TO manabu;"#{term_cover}`
 
+  puts 'Running Rails database setup tasks'
+  puts '...create'
   `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:create`
+  puts '...migrate'
   `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:migrate`
+  puts '...test:prepare'
   `RAILS_ENV=test bundle exec rails app:update:bin db:environment:set db:test:prepare`
 end
 
